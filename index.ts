@@ -1,6 +1,8 @@
 import axios from "axios";
 import { io } from "socket.io-client";
 
+let clicked = false;
+
 export default class Once {
   payload: OncePayload;
 
@@ -31,6 +33,8 @@ export default class Once {
    */
 
   async checkout() {
+    if( clicked ) return
+    clicked = true
     const errors = this.validatePayload();
     //   No errors
     const NO_ERROR = Object.values(errors).every(
@@ -47,6 +51,7 @@ export default class Once {
           (screen.width - 500) / 2
         }`
       );
+      clicked = true;
       return;
     }
 
@@ -69,13 +74,13 @@ export default class Once {
       host: window.location.host ?? "",
     };
 
-    const res = await axios.post("https://once-api.herokuapp.com/init", data);
+    const res = await axios.post("https://web-production-133c.up.railway.app/init", data);
 
     return res.data as OnceInitialize;
   }
 
   protected setUpEvents(ref: string) {
-    const socket = io("https://once-api.herokuapp.com/transaction");
+    const socket = io("https://web-production-133c.up.railway.app/transaction");
 
     console.log(ref);
 
@@ -85,13 +90,3 @@ export default class Once {
   }
 }
   
-  interface OncePayload {
-    amount: number;
-    successCallback: Function;
-  }
-  
-  interface OnceInitialize {
-    message: string;
-    transaction_ref: string;
-    url: string;
-  }

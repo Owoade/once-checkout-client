@@ -1,9 +1,9 @@
 {
   "name": "checkout-once",
-  "version": "1.1.2",
+  "version": "1.0.3",
   "type": "module",
   "author": "Owoade Anuoluwapo <owoadeanuoluwapo2@gmail.com>",
-  "repository": "git@github.com:Owoade/once-checkout.git",
+  "repository": "git@github.com:Owoade/once-checkout-client.git",
   "license": "MIT",
   "dependencies": {
     "axios": "^1.1.3",
