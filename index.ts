@@ -1,9 +1,10 @@
 import axios from "axios";
 import { io } from "socket.io-client";
+import {OnceInitialize, OncePayload} from "./types/types.js"
 
 let clicked = false;
 
-export default class Once {
+export  default class  Once {
   payload: OncePayload;
 
   constructor(payload: OncePayload) {
@@ -74,15 +75,13 @@ export default class Once {
       host: window.location.host ?? "",
     };
 
-    const res = await axios.post("https://web-production-133c.up.railway.app/init", data);
+    const res = await axios.post("https://once-checkout-c1210716449a.herokuapp.com/init", data);
 
     return res.data as OnceInitialize;
   }
 
   protected setUpEvents(ref: string) {
-    const socket = io("https://web-production-133c.up.railway.app/transaction");
-
-    console.log(ref);
+    const socket = io("https://once-checkout-c1210716449a.herokuapp.com/transaction");
 
     socket.emit("transaction-init", ref);
 

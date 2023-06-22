@@ -1,8 +1,19 @@
 {
   "name": "checkout-once",
-  "version": "1.0.3",
+  "version": "1.1.5",
   "type": "module",
+  "types": "./dist/esm/index.d.ts",
   "author": "Owoade Anuoluwapo <owoadeanuoluwapo2@gmail.com>",
+  "scripts": {
+    "build": "rm -rf dist/ && npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc --module es6 --outDir dist/esm",
+    "build:cjs": "tsc --module CommonJS --outDir dist/cjs"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "files": [
+    "dist"
+  ],
   "repository": "git@github.com:Owoade/once-checkout-client.git",
   "license": "MIT",
   "dependencies": {
