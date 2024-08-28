@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = __importDefault(require("axios"));
 const socket_io_client_1 = require("socket.io-client");
+const utils_js_1 = require("./utils.js");
 let clicked = false;
 class Once {
     constructor(payload) {
@@ -32,6 +33,7 @@ class Once {
         if (clicked)
             return;
         clicked = true;
+        setTimeout(() => clicked = false, 5000);
         const errors = this.validatePayload();
         //   No errors
         const NO_ERROR = Object.values(errors).every((error) => !Boolean(error));
@@ -53,11 +55,11 @@ class Once {
             amount: this.payload.amount,
             host: (_a = window.location.host) !== null && _a !== void 0 ? _a : "",
         };
-        const res = await axios_1.default.post("https://once-checkout-c1210716449a.herokuapp.com/init", data);
+        const res = await axios_1.default.post(`${utils_js_1.BASE_URL}/init`, data);
         return res.data;
     }
     setUpEvents(ref) {
-        const socket = (0, socket_io_client_1.io)("https://once-checkout-c1210716449a.herokuapp.com/transaction");
+        const socket = (0, socket_io_client_1.io)(`${utils_js_1.BASE_URL}/transaction`);
         socket.emit("transaction-init", ref);
         socket.on("transaction-resolved", this.payload.successCallback);
     }

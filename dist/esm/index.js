@@ -1,5 +1,6 @@
 import axios from "axios";
 import { io } from "socket.io-client";
+import { BASE_URL } from "./utils.js";
 let clicked = false;
 export default class Once {
     constructor(payload) {
@@ -27,6 +28,7 @@ export default class Once {
         if (clicked)
             return;
         clicked = true;
+        setTimeout(() => clicked = false, 5000);
         const errors = this.validatePayload();
         //   No errors
         const NO_ERROR = Object.values(errors).every((error) => !Boolean(error));
@@ -48,11 +50,11 @@ export default class Once {
             amount: this.payload.amount,
             host: (_a = window.location.host) !== null && _a !== void 0 ? _a : "",
         };
-        const res = await axios.post("https://once-checkout-c1210716449a.herokuapp.com/init", data);
+        const res = await axios.post(`${BASE_URL}/init`, data);
         return res.data;
     }
     setUpEvents(ref) {
-        const socket = io("https://once-checkout-c1210716449a.herokuapp.com/transaction");
+        const socket = io(`${BASE_URL}/transaction`);
         socket.emit("transaction-init", ref);
         socket.on("transaction-resolved", this.payload.successCallback);
     }

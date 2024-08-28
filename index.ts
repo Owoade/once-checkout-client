@@ -1,18 +1,24 @@
 import axios from "axios";
 import { io } from "socket.io-client";
 import {OnceInitialize, OncePayload} from "./types/types.js"
+import { BASE_URL } from "./utils.js";
 
 let clicked = false;
 
 export  default class  Once {
+
   payload: OncePayload;
 
   constructor(payload: OncePayload) {
+
     this.payload = payload ?? {};
+
   }
 
   protected validatePayload() {
+
     const { amount, successCallback } = this.payload;
+
     // cases
     const MISSING_PAYLOAD = !("amount" in this.payload)
       ? "amount"
@@ -27,6 +33,7 @@ export  default class  Once {
       : null;
 
     return { missingPayload: MISSING_PAYLOAD, typeMismatch: TYPE_MISMATCH };
+
   }
 
     /**
@@ -34,17 +41,26 @@ export  default class  Once {
    */
 
   async checkout() {
+
     if( clicked ) return
-    clicked = true
+
+    clicked = true;
+
+    setTimeout(()=> clicked = false, 5000 )
+
     const errors = this.validatePayload();
+
     //   No errors
     const NO_ERROR = Object.values(errors).every(
       (error: string | null) => !Boolean(error)
     );
 
     if (NO_ERROR) {
+
       const checkout = await this.getCheckoutLink();
+
       this.setUpEvents(checkout.transaction_ref);
+
       window.open(
         checkout.url,
         "New Window",
@@ -52,7 +68,9 @@ export  default class  Once {
           (screen.width - 500) / 2
         }`
       );
+
       clicked = true;
+
       return;
     }
 
@@ -70,22 +88,27 @@ export  default class  Once {
   }
 
   protected async getCheckoutLink() {
+
     const data = {
       amount: this.payload.amount,
       host: window.location.host ?? "",
     };
 
-    const res = await axios.post("https://once-checkout-c1210716449a.herokuapp.com/init", data);
+    const res = await axios.post(`${BASE_URL}/init`, data);
 
     return res.data as OnceInitialize;
   }
 
   protected setUpEvents(ref: string) {
-    const socket = io("https://once-checkout-c1210716449a.herokuapp.com/transaction");
+
+    const socket = io(`${BASE_URL}/transaction`);
 
     socket.emit("transaction-init", ref);
 
     socket.on("transaction-resolved", this.payload.successCallback as any);
+
   }
+
+
 }
   
